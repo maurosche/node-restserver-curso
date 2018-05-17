@@ -1,6 +1,8 @@
 require('./config/config');
 
 const express = require('express');
+const mongoose = require('mongoose');
+
 const app = express();
 const bodyParser = require('body-parser')
 
@@ -10,39 +12,14 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-app.get('/usuario',function(req,res){
-    res.json('Get usuarios');
-})
+app.use( require('./routes/usuario'));
 
-app.post('/usuario',function(req,res){
+mongoose.connect(process.env.urlDB, (err,res)=>{
+     if (err) throw err;
 
-    var body = req.body;
-
-    if(body.nombre === undefined){
-        res.status(400).json({
-           ok:false
-        });
-    }
-    else{
-        res.json({
-            body
-        });
-    }
-})
-
-app.put('/usuario/:id',function(req,res){
-
-    let id = req.params.id;
-
-    res.json({
-        id
-    });
-})
-
-app.delete('/usuario',function(req,res){
-    res.json('Delete usuarios');
-})
+     console.log("CONEXION OK!!");
+});
 
 app.listen(process.env.PORT ,() => {
-    console.log('Escuhando en puerto: ', 3000);
+    console.log('Escuhando en puerto: ', process.env.PORT);
 });
