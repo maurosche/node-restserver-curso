@@ -3,10 +3,11 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 const Usuario = require('../models/usuario');
+const { verificarToken,verificarAdmin_Role } = require('../middlewares/autenticacion');
 
 const app = express();
 
-app.get('/usuario',function(req,res){
+app.get('/usuario', verificarToken, function(req,res){
 
     //res.json('Get usuarios');
 
@@ -42,7 +43,7 @@ app.get('/usuario',function(req,res){
     );
 })
 
-app.post('/usuario',function(req,res){
+app.post('/usuario', [verificarToken,verificarAdmin_Role], function(req,res){
 
     var body = req.body;
 
@@ -68,21 +69,10 @@ app.post('/usuario',function(req,res){
             usuario : usuarioDB
         });
     });
-
-    // if(body.nombre === undefined){
-    //     res.status(400).json({
-    //        ok:false
-    //     });
-    // }
-    // else{
-    //     res.json({
-    //         body
-    //     });
-    // }
 })
 
-app.put('/usuario/:id',function(req,res){
-debugger;
+app.put('/usuario/:id', [verificarToken,verificarAdmin_Role],function(req,res){
+
     let id = req.params.id;
     let body =  _.pick(req.body, ['nombre','email','img','role','estado']);
 
@@ -103,7 +93,7 @@ debugger;
     });   
 })
 
-app.delete('/usuario/:id',function(req,res){
+app.delete('/usuario/:id', [verificarToken,verificarAdmin_Role],function(req,res){
 
     //res.json('Delete usuarios');
 
